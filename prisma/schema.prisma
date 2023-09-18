@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  TRADESMAN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  lastName  String
+  email     String   @unique
+  document  String   @unique
+  password  String
+  role      Role     @default(USER)
+  Wallet    Wallet?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @updatedAt
+}
+
+model Wallet {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  amount    Float    @default(0.0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id                String   @id @default(uuid())
+  receive_wallet_id String   @unique
+  sender_wallet_id  String   @unique
+  amount            Float
+  createdAt         DateTime @default(now())
+}

@@ -10,7 +10,7 @@ services:
       - data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=challange-picpay
+      - MYSQL_DATABASE=challange_backend
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     links:

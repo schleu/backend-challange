@@ -35,6 +35,14 @@ $ yarn install
 ## Running the app
 
 ```bash
+
+#docker
+$ docker-compose up -d
+
+#prisma
+$ yarn prisma generate
+$ yarn prisma migrate dev
+
 # development
 $ yarn run start
 
