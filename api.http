@@ -1,0 +1,30 @@
+GET http://localhost:3000/users
+
+###
+
+GET http://localhost:3000/users/8594c8c1-9f46-4579-bef4-23cea1d1bb64
+
+###
+
+POST http://localhost:3000/users
+content-type: application/json
+
+{
+    "name": "Bradesco",
+    "lastName": "ltda",
+    "email": "bradesco1@gmail.com",
+    "document": "05281311501",
+    "password": "1234",
+    "role": "TRADESMAN"
+}
+###
+
+POST http://localhost:3000/transfer
+content-type: application/json
+
+{  
+    "receive_wallet_id": "6bef4078-6a86-4bf2-b458-203cc77a0753",
+    "sender_wallet_id": "5c17d90d-a654-4f50-976a-91e33f306bbb",
+    "amount": 200
+   }
+###

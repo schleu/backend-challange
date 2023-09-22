@@ -1,10 +1,11 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import axios from 'axios';
 import { UsersService } from 'src/users/users.service';
 import { WalletService } from 'src/wallet/wallet.service';
 import { TransactionService } from './transaction.service';
 
-@Controller('transaction')
+@Controller('')
 export class TransactionController {
   constructor(
     private readonly transactionService: TransactionService,
@@ -14,30 +15,75 @@ export class TransactionController {
 
   @Post('/transfer')
   async makeTransfer(@Body() data: Prisma.TransactionCreateInput, @Res() res) {
-    const sender = await this.wallet.getWallet({
-      userId: data.sender_wallet_id,
+    const senderWallet = await this.wallet.getWallet({
+      id: data.sender_wallet_id,
     });
 
-    const userSender = await this.user.getUser({ id: sender.id });
+    const userSender = await this.user.getUser({ id: senderWallet.userId });
 
     if (userSender.role === 'TRADESMAN')
       return res.status(400).send({
         message: 'Usuários com a role `TRADESMAN` não pode enviar dinheiro.',
       });
 
-    if (sender.amount < 1)
+    if (senderWallet.amount < data.amount)
       return res.status(400).send({
-        message: 'Não tem dinheiro',
+        message: `Saldo inferior a ${data.amount}`,
       });
 
-    const receive = await this.wallet.getWallet({
-      userId: data.receive_wallet_id,
+    const transaction = await this.transactionService.create(data);
+
+    const authorization = await axios.request({
+      method: 'GET',
+      url: 'https://run.mocky.io/v3/48f7d5a7-50d9-4470-94c0-2a19a85426ff',
+      headers: {
+        Accept: 'application/json',
+      },
     });
 
-    this.wallet.deposit(data.amount, receive.id);
-    this.wallet.withdraw(data.amount, sender.id);
+    this.transactionService.update(
+      { status: 'IN_PROGRESS' },
+      { id: transaction.id },
+    );
 
-    const transaction = await this.transactionService.create(data);
+    if (authorization.data.message !== 'Autorizado') {
+      this.transactionService.update(
+        { status: 'FAILED' },
+        { id: transaction.id },
+      );
+
+      return res.status(400).send({
+        message: 'Transferencia não autorizada.',
+      });
+    }
+
+    const transfer = await this.wallet.transfer(
+      data.amount,
+      data.sender_wallet_id,
+      data.receive_wallet_id,
+    );
+
+    if (!transfer[0].id || !transfer[1].id) {
+      this.transactionService.update(
+        { status: 'FAILED' },
+        { id: transaction.id },
+      );
+
+      return res.status(400).send({
+        message: 'Ocorreu um erro inesperado.',
+      });
+    }
+
+    await axios.post('https://v4ew7.wiremockapi.cloud/notify', {
+      Body: {
+        transaction,
+      },
+    });
+
+    this.transactionService.update(
+      { status: 'SUCCESS' },
+      { id: transaction.id },
+    );
 
     return res.status(200).send(transaction);
   }

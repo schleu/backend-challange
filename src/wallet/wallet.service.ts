@@ -21,19 +21,31 @@ export class WalletService {
     return this.prisma.wallet.update({ data, where });
   }
 
+  async transfer(amount: number, idSender: string, idReceive: string) {
+    const userW = await this.getWallet({ id: idSender });
+    const withdraw = this.prisma.wallet.update({
+      data: { amount: userW.amount - amount },
+      where: { id: idSender },
+    });
+
+    const userD = await this.getWallet({ id: idReceive });
+    const deposit = this.prisma.wallet.update({
+      data: { amount: userD.amount + amount },
+      where: { id: idReceive },
+    });
+
+    return this.prisma.$transaction([withdraw, deposit]);
+  }
+
   async deposit(value: number, id: string) {
     const w = await this.getWallet({ id: id, userId: id });
-
     const amount = w.amount + value;
-
     return this.update({ amount }, { id: w.id });
   }
 
   async withdraw(value: number, id: string) {
     const w = await this.getWallet({ id: id, userId: id });
-
     const amount = w.amount - value;
-
     return this.update({ amount }, { id: w.id });
   }
 }

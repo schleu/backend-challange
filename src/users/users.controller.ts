@@ -63,6 +63,22 @@ export class UsersController {
         });
     });
 
+    const userFinded = await this.appService.getUsers({
+      OR: [
+        {
+          email: userData.email,
+          document: userData.document,
+        },
+      ],
+    });
+
+    if (userFinded) {
+      return res.status(400).send({
+        status: 400,
+        message: 'User already exist.',
+      });
+    }
+
     const user = await this.appService.create(userData);
 
     const wallet = await this.walletService.create({

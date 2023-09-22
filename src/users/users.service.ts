@@ -14,8 +14,8 @@ export class UsersService {
     return this.prisma.user.create({ data });
   }
 
-  async getUsers(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async getUsers(where?: Prisma.UserWhereInput): Promise<User[]> {
+    return this.prisma.user.findMany({ where });
   }
 
   async update(
