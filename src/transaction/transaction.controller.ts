@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, Param } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { UsersService } from 'src/users/users.service';
@@ -16,7 +16,7 @@ export class TransactionController {
   @Post('/transfer')
   async makeTransfer(@Body() data: Prisma.TransactionCreateInput, @Res() res) {
     const senderWallet = await this.wallet.getWallet({
-      id: data.sender_wallet_id,
+      id: data.sender_wallet.connect.id,
     });
 
     const userSender = await this.user.getUser({ id: senderWallet.userId });
@@ -59,8 +59,8 @@ export class TransactionController {
 
     const transfer = await this.wallet.transfer(
       data.amount,
-      data.sender_wallet_id,
-      data.receive_wallet_id,
+      data.sender_wallet.connect.id,
+      data.receive_wallet.connect.id,
     );
 
     if (!transfer[0].id || !transfer[1].id) {
@@ -86,5 +86,16 @@ export class TransactionController {
     );
 
     return res.status(200).send(transaction);
+  }
+
+  @Get('/transaction/:id')
+  async transaction(@Param('id') id: string) {
+    console.log(id);
+    return this.transactionService.findAllById({ id });
+  }
+
+  @Get('/transaction')
+  async transactionAll() {
+    return this.transactionService.findAll();
   }
 }

@@ -15,7 +15,7 @@ import { UsersService } from './users.service';
 @Controller()
 export class UsersController {
   constructor(
-    private readonly appService: UsersService,
+    private readonly userService: UsersService,
     private walletService: WalletService,
   ) {}
 
@@ -26,13 +26,13 @@ export class UsersController {
         message: 'id not found',
       });
 
-    const data = await this.appService.getUser({ id });
+    const data = await this.userService.getUser({ id });
     return res.status(200).send(data);
   }
 
   @Get('/users')
   async getUsers(@Res() res) {
-    const data = await this.appService.getUsers();
+    const data = await this.userService.getUsers();
     return res.status(200).send({
       status: 200,
       data,
@@ -63,7 +63,7 @@ export class UsersController {
         });
     });
 
-    const userFinded = await this.appService.getUsers({
+    const userFinded = await this.userService.getUsers({
       OR: [
         {
           email: userData.email,
@@ -79,7 +79,7 @@ export class UsersController {
       });
     }
 
-    const user = await this.appService.create(userData);
+    const user = await this.userService.create(userData);
 
     const wallet = await this.walletService.create({
       user: {
@@ -103,11 +103,11 @@ export class UsersController {
     @Param('id') id: string,
     @Body() data: Prisma.UserUpdateInput,
   ): Promise<User> {
-    return this.appService.update(data, { id });
+    return this.userService.update(data, { id });
   }
 
   @Patch('/users/:id')
   async updateUser(@Param('id') id: string): Promise<User> {
-    return this.appService.delete({ id });
+    return this.userService.delete({ id });
   }
 }

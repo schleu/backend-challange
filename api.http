@@ -1,8 +1,15 @@
+###
+
 GET http://localhost:3000/users
 
 ###
 
 GET http://localhost:3000/users/8594c8c1-9f46-4579-bef4-23cea1d1bb64
+
+
+###
+
+GET http://localhost:3000/wallet
 
 ###
 
@@ -17,6 +24,8 @@ content-type: application/json
     "password": "1234",
     "role": "TRADESMAN"
 }
+
+
 ###
 
 POST http://localhost:3000/transfer
@@ -27,4 +36,12 @@ content-type: application/json
     "sender_wallet_id": "5c17d90d-a654-4f50-976a-91e33f306bbb",
     "amount": 200
    }
+###
+
+GET http://localhost:3000/transaction
+
+###
+
+GET http://localhost:3000/transaction/0e935a20-6d7b-4dfb-8cc5-1fba4dfec225
+
 ###

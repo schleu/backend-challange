@@ -38,12 +38,16 @@ model User {
 }
 
 model Wallet {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
-  amount    Float    @default(0.0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String        @id @default(uuid())
+  userId         String        @unique
+  amount         Float         @default(0.0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  receive_wallet Transaction[] @relation("receive_wallet")
+  sender_wallet  Transaction[] @relation("sender_wallet")
+  user           User          @relation(fields: [userId], references: [id])
+
+  @@map("user")
 }
 
 model Transaction {
@@ -53,4 +57,6 @@ model Transaction {
   amount            Float
   status            StatusTransaction @default(CREATED)
   createdAt         DateTime          @default(now())
+  receive_wallet    Wallet            @relation("receive_wallet", fields: [receive_wallet_id], references: [id])
+  sender_wallet     Wallet            @relation("sender_wallet", fields: [sender_wallet_id], references: [id])
 }

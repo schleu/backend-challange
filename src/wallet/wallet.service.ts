@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, Wallet } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class WalletService {
   constructor(private prisma: PrismaService) {}
+
+  async getAllWallets(): Promise<Wallet[]> {
+    return this.prisma.wallet.findMany({
+      include: {
+        user: true,
+      },
+    });
+  }
 
   async getWallet(where: Prisma.WalletWhereUniqueInput): Promise<Wallet> {
     return this.prisma.wallet.findUnique({ where });

@@ -16,4 +16,51 @@ export class TransactionService {
   ) {
     return this.prisma.transaction.update({ data, where });
   }
+
+  async findAll() {
+    return this.prisma.transaction.findMany({
+      include: {
+        receive_wallet: {
+          select: {
+            id: true,
+            amount: true,
+            createdAt: true,
+            user: true,
+          },
+        },
+        sender_wallet: {
+          select: {
+            id: true,
+            amount: true,
+            createdAt: true,
+            user: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findAllById(where: Prisma.TransactionWhereUniqueInput) {
+    return this.prisma.transaction.findMany({
+      where,
+      include: {
+        receive_wallet: {
+          select: {
+            id: true,
+            amount: true,
+            createdAt: true,
+            user: true,
+          },
+        },
+        sender_wallet: {
+          select: {
+            id: true,
+            amount: true,
+            createdAt: true,
+            user: true,
+          },
+        },
+      },
+    });
+  }
 }

@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { WalletService } from './wallet.service';
 
-@Controller('wallet')
-export class WalletController {}
+@Controller('')
+export class WalletController {
+  constructor(private readonly walletService: WalletService) {}
+
+  @Get('/wallet')
+  async wallets() {
+    return this.walletService.getAllWallets();
+  }
+}
