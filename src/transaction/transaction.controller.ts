@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Res, Param } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
-import { UsersService } from 'src/users/users.service';
-import { WalletService } from 'src/wallet/wallet.service';
+import { UsersService } from '../users/users.service';
+import { WalletService } from '../wallet/wallet.service';
 import { TransactionService } from './transaction.service';
 
 @Controller('')
