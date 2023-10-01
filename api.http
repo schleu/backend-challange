@@ -28,13 +28,13 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3000/transfer
+POST http://localhost:3000/transaction
 content-type: application/json
 
 {  
     "receive_wallet_id": "6bef4078-6a86-4bf2-b458-203cc77a0753",
     "sender_wallet_id": "5c17d90d-a654-4f50-976a-91e33f306bbb",
-    "amount": 200
+    "amount": 20000000
    }
 ###
 
